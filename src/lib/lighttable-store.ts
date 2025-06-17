@@ -20,10 +20,14 @@ class LighttableStore {
   }
   
   private listeners: ((state: LighttableState) => void)[] = []
+  private hydrated = false
 
   constructor() {
-    // Load from localStorage on init
-    this.loadFromStorage()
+    // Don't load from localStorage during SSR
+    if (typeof window !== 'undefined') {
+      this.loadFromStorage()
+      this.hydrated = true
+    }
   }
 
   subscribe(listener: (state: LighttableState) => void) {
@@ -39,6 +43,8 @@ class LighttableStore {
   }
 
   private saveToStorage() {
+    if (typeof window === 'undefined' || !this.hydrated) return
+    
     try {
       localStorage.setItem('lighttable-state', JSON.stringify({
         ...this.state,

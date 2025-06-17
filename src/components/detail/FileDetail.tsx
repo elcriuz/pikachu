@@ -6,6 +6,7 @@ import { X, ChevronLeft, ChevronRight, Star, Check, MessageSquare, Film, Loader2
 import { PlyrVideoPlayer } from '@/components/video/PlyrVideoPlayer'
 import { PDFViewer } from '@/components/pdf/PDFViewer'
 import { lighttableStore } from '@/lib/lighttable-store'
+import { KeyboardShortcutsToggle } from '@/components/ui/KeyboardShortcuts'
 import type { FileItem, Metadata, User } from '@/types'
 
 interface FileDetailProps {
@@ -54,6 +55,13 @@ export function FileDetail({ file, allFiles, user, onClose, onNavigate }: FileDe
       if (e.key === 'ArrowLeft' && canGoPrev) onNavigate(allFiles[currentIndex - 1])
       if (e.key === 'ArrowRight' && canGoNext) onNavigate(allFiles[currentIndex + 1])
       if (e.key === 'c' && videoError && !isConverting) handleConvert()
+      
+      // Rating shortcuts
+      if (['1', '2', '3', '4', '5'].includes(e.key)) {
+        e.preventDefault()
+        const rating = parseInt(e.key)
+        handleRating(rating)
+      }
       
       // Image zoom shortcuts (only for images)
       if (file.mimeType?.startsWith('image/')) {
@@ -477,6 +485,9 @@ export function FileDetail({ file, allFiles, user, onClose, onNavigate }: FileDe
           </div>
         )}
       </div>
+
+      {/* Keyboard Shortcuts Toggle */}
+      <KeyboardShortcutsToggle context="lightbox" />
 
       {/* Metadata panel */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">

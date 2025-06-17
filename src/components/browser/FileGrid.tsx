@@ -9,14 +9,17 @@ import type { FileItem, Metadata } from '@/types'
 
 interface FileGridProps {
   files: FileItem[]
+  selectedIndex?: number
   onNavigate: (path: string) => void
   onSelectFile?: (file: FileItem) => void
+  onSetSelectedIndex?: (index: number) => void
 }
 
-export function FileGrid({ files, onNavigate, onSelectFile }: FileGridProps) {
+export function FileGrid({ files, selectedIndex = 0, onNavigate, onSelectFile, onSetSelectedIndex }: FileGridProps) {
   const [metadata, setMetadata] = useState<Record<string, Metadata>>({})
   const [thumbnails, setThumbnails] = useState<Record<string, string>>({})
   const [loadingThumbs, setLoadingThumbs] = useState<Record<string, boolean>>({})
+  const [lighttableItems, setLighttableItems] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     // Load metadata and thumbnails for all files
@@ -29,6 +32,21 @@ export function FileGrid({ files, onNavigate, onSelectFile }: FileGridProps) {
       }
     })
   }, [files])
+
+  useEffect(() => {
+    // Subscribe to lighttable changes to track which items are in the lighttable
+    const unsubscribe = lighttableStore.subscribe((state) => {
+      const itemPaths = new Set(state.items.map(item => item.filePath))
+      setLighttableItems(itemPaths)
+    })
+    
+    // Initial load
+    const initialState = lighttableStore.getState()
+    const initialPaths = new Set(initialState.items.map(item => item.filePath))
+    setLighttableItems(initialPaths)
+    
+    return unsubscribe
+  }, [])
 
   async function fetchMetadata(path: string) {
     try {
@@ -101,23 +119,26 @@ export function FileGrid({ files, onNavigate, onSelectFile }: FileGridProps) {
 
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-      {files.map((file) => {
+      {files.map((file, index) => {
         const meta = metadata[file.path] || {}
+        const isKeyboardSelected = index === selectedIndex
         
         return (
           <div
             key={file.path}
-            className="group relative cursor-pointer rounded-lg border p-2 transition-colors hover:bg-muted/50"
+            className={`group relative cursor-pointer rounded-lg border p-2 transition-colors hover:bg-muted/50 ${
+              isKeyboardSelected ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200' : ''
+            }`}
+            onClick={() => {
+              onSetSelectedIndex?.(index)
+              if (file.type === 'folder') {
+                onNavigate(file.path)
+              } else if (onSelectFile) {
+                onSelectFile(file)
+              }
+            }}
           >
-            <div
-              onClick={() => {
-                if (file.type === 'folder') {
-                  onNavigate(file.path)
-                } else if (onSelectFile) {
-                  onSelectFile(file)
-                }
-              }}
-            >
+            <div>
               <div className="relative aspect-square overflow-hidden rounded bg-muted">
                 {file.type === 'folder' ? (
                   <div className="flex h-full items-center justify-center">
@@ -166,24 +187,31 @@ export function FileGrid({ files, onNavigate, onSelectFile }: FileGridProps) {
                   <div className="absolute right-2 top-2 flex gap-1">
                     {/* Add to Lighttable (only for images) */}
                     {file.mimeType?.startsWith('image/') && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          lighttableStore.addItem(file.path, file.name, file.mimeType!)
-                          // Visual feedback
-                          const button = e.currentTarget
-                          button.style.transform = 'scale(1.2)'
-                          button.style.backgroundColor = '#10b981'
-                          setTimeout(() => {
-                            button.style.transform = 'scale(1)'
-                            button.style.backgroundColor = ''
-                          }, 200)
-                        }}
-                        className="h-6 w-6 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-green-50 transition-all"
-                        title="Zu Lighttable hinzufügen"
-                      >
-                        <Plus className="h-3 w-3 text-green-600" />
-                      </button>
+                      lighttableItems.has(file.path) ? (
+                        <div className="h-6 w-6 rounded-full bg-blue-500 shadow-md flex items-center justify-center"
+                             title="Im Lighttable">
+                          <Layout className="h-3 w-3 text-white" />
+                        </div>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            lighttableStore.addItem(file.path, file.name, file.mimeType!)
+                            // Visual feedback
+                            const button = e.currentTarget
+                            button.style.transform = 'scale(1.2)'
+                            button.style.backgroundColor = '#10b981'
+                            setTimeout(() => {
+                              button.style.transform = 'scale(1)'
+                              button.style.backgroundColor = ''
+                            }, 200)
+                          }}
+                          className="h-6 w-6 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-green-50 transition-all"
+                          title="Zu Lighttable hinzufügen"
+                        >
+                          <Plus className="h-3 w-3 text-green-600" />
+                        </button>
+                      )
                     )}
                     
                     {/* Selection indicator */}

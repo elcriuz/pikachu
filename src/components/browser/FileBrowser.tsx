@@ -11,18 +11,22 @@ interface FileBrowserProps {
   files: FileItem[]
   currentPath: string
   isLoading: boolean
+  selectedIndex?: number
   onNavigate: (path: string) => void
   onRefresh: () => void
   onSelectFile?: (file: FileItem) => void
+  onSetSelectedIndex?: (index: number) => void
 }
 
 export function FileBrowser({
   files,
   currentPath,
   isLoading,
+  selectedIndex = 0,
   onNavigate,
   onRefresh,
   onSelectFile,
+  onSetSelectedIndex,
 }: FileBrowserProps) {
   const [showCreateFolder, setShowCreateFolder] = useState(false)
 
@@ -74,7 +78,13 @@ export function FileBrowser({
           </div>
         </div>
       ) : (
-        <FileGrid files={files} onNavigate={onNavigate} onSelectFile={onSelectFile} />
+        <FileGrid 
+          files={files} 
+          selectedIndex={selectedIndex}
+          onNavigate={onNavigate} 
+          onSelectFile={onSelectFile} 
+          onSetSelectedIndex={onSetSelectedIndex}
+        />
       )}
 
       {showCreateFolder && (
