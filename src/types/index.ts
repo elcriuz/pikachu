@@ -30,3 +30,12 @@ export interface BreadcrumbItem {
   name: string
   path: string
 }
+
+export interface Comment {
+  id: string
+  text: string
+  content: string
+  author: string
+  timestamp: string
+  rating?: number
+}
