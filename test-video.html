@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Test</title>
+</head>
+<body>
+    <h1>Direct Video Test</h1>
+    <p>Testing direct file access to video:</p>
+    
+    <video controls width="640" height="480" style="background: black;">
+        <source src="data/Example Client/Demo Project/Casting/Liam_AnnyTalents/Liam_AnnyTalents_Intro_web.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    
+    <p>If you see this message but no video, the file path might be incorrect or you need to be logged in.</p>
+    
+    <script>
+        const video = document.querySelector('video');
+        video.addEventListener('error', (e) => {
+            console.error('Video error:', e);
+            console.log('Error code:', video.error?.code);
+            console.log('Error message:', video.error?.message);
+        });
+        
+        video.addEventListener('loadstart', () => console.log('Load started'));
+        video.addEventListener('loadedmetadata', () => console.log('Metadata loaded'));
+        video.addEventListener('canplay', () => console.log('Can play'));
+    </script>
+</body>
+</html>
