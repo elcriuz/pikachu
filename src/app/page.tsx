@@ -18,21 +18,28 @@ export default function LoginPage() {
     setError('')
 
     try {
+      console.log('Attempting login with email:', email)
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
+        credentials: 'include'
       })
 
+      console.log('Response status:', res.status)
       const data = await res.json()
+      console.log('Response data:', data)
 
       if (!res.ok) {
+        console.error('Login failed:', data.error)
         setError(data.error || 'Anmeldung fehlgeschlagen')
         return
       }
 
+      console.log('Login successful, redirecting to /browser')
       router.push('/browser')
     } catch (error) {
+      console.error('Network error:', error)
       setError('Netzwerkfehler')
     } finally {
       setIsLoading(false)

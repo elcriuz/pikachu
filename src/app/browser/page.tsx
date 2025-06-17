@@ -183,12 +183,20 @@ export default function BrowserPage() {
 
   async function fetchUser() {
     try {
-      const res = await fetch('/api/auth/me')
+      console.log('Fetching user session...')
+      const res = await fetch('/api/auth/me', {
+        credentials: 'include'
+      })
+      console.log('Auth check response:', res.status)
+      
       if (!res.ok) {
+        console.error('Not authenticated, redirecting to login')
         router.push('/')
         return
       }
+      
       const data = await res.json()
+      console.log('User data:', data)
       const user = data.user
       setUser(user)
       
@@ -198,6 +206,7 @@ export default function BrowserPage() {
         router.push(`/browser?path=${encodeURIComponent(user.startPath)}`)
       }
     } catch (error) {
+      console.error('Error fetching user:', error)
       router.push('/')
     }
   }

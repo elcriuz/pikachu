@@ -12,8 +12,10 @@ const secret = new TextEncoder().encode(
 export async function getUsers(): Promise<User[]> {
   try {
     const configPath = path.join(process.cwd(), 'config', 'users.json')
+    console.log('Reading users from:', configPath)
     const data = await fs.readFile(configPath, 'utf-8')
     const config = JSON.parse(data)
+    console.log('Loaded users:', config.users)
     return config.users || []
   } catch (error) {
     console.error('Error reading users config:', error)
@@ -46,8 +48,14 @@ export async function verifyToken(token: string): Promise<User | null> {
 export async function getSession(request?: NextRequest): Promise<User | null> {
   const cookieStore = request ? request.cookies : cookies()
   const token = cookieStore.get('auth-token')?.value
+  console.log('getSession - token exists:', !!token)
 
-  if (!token) return null
+  if (!token) {
+    console.log('No auth-token cookie found')
+    return null
+  }
 
-  return await verifyToken(token)
+  const user = await verifyToken(token)
+  console.log('getSession - verified user:', user)
+  return user
 }
