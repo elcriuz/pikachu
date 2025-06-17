@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Upload, MessageSquare, LogOut, FolderOpen, Home, Layout, ShoppingCart } from 'lucide-react'
 import type { User, BreadcrumbItem } from '@/types'
+import packageJson from '../../../package.json'
 
 interface HeaderProps {
   user: User
@@ -32,7 +33,7 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
         <div className="flex items-center gap-2">
           <h1 className="text-xl font-bold">Pikachu</h1>
           <span className="text-xs text-muted-foreground bg-gray-100 px-2 py-1 rounded">
-            v0.2.0
+            v{packageJson.version}
           </span>
           {process.env.NODE_ENV === 'development' && (
             <span className="text-xs text-white bg-orange-500 px-2 py-1 rounded font-medium">
@@ -67,10 +68,9 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
 
         <div className="flex items-center gap-4">
           {(user.role === 'admin' || user.role === 'manager') && (
-            <Button onClick={onUpload} size="sm">
-              <Upload className="mr-2 h-4 w-4" />
-              Upload
-            </Button>
+            <span className="text-xs text-muted-foreground hidden md:block">
+              Drag & Drop Upload
+            </span>
           )}
           
           <Button 
