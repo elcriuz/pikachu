@@ -26,6 +26,8 @@ export default function BrowserPage() {
   const [showDownloadCollection, setShowDownloadCollection] = useState(false)
   const [isHydrated, setIsHydrated] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [customOrder, setCustomOrder] = useState<Record<string, FileItem[]>>({})
+  const [isSortMode, setIsSortMode] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const path = searchParams.get('path') || ''
@@ -101,14 +103,33 @@ export default function BrowserPage() {
           
         case 'Enter':
           e.preventDefault()
-          // Open selected file/folder
-          if (files[selectedIndex]) {
-            const selectedItem = files[selectedIndex]
-            if (selectedItem.type === 'folder') {
-              handleNavigate(selectedItem.path)
+          if (isSortMode) {
+            // Exit sort mode
+            setIsSortMode(false)
+          } else {
+            // Toggle sort mode or open file/folder
+            if (e.shiftKey) {
+              // Shift+Enter: Toggle sort mode
+              setIsSortMode(true)
             } else {
-              setSelectedFile(selectedItem)
+              // Regular Enter: Open selected file/folder
+              if (files[selectedIndex]) {
+                const selectedItem = files[selectedIndex]
+                if (selectedItem.type === 'folder') {
+                  handleNavigate(selectedItem.path)
+                } else {
+                  setSelectedFile(selectedItem)
+                }
+              }
             }
+          }
+          break
+          
+        case ' ': // Spacebar
+          e.preventDefault()
+          // Quick Look - open lightbox for files only
+          if (files[selectedIndex] && files[selectedIndex].type === 'file') {
+            setSelectedFile(files[selectedIndex])
           }
           break
 
@@ -118,10 +139,29 @@ export default function BrowserPage() {
         case '4':
         case '5':
           e.preventDefault()
-          // Rate selected file
-          if (files[selectedIndex] && files[selectedIndex].type === 'file') {
-            const rating = parseInt(e.key)
-            handleRating(files[selectedIndex].path, rating)
+          if (isSortMode) {
+            // In sort mode: Move selected item to position (1-5)
+            const targetPosition = parseInt(e.key) - 1
+            if (targetPosition < files.length && targetPosition !== selectedIndex) {
+              const newFiles = [...files]
+              const [movedItem] = newFiles.splice(selectedIndex, 1)
+              newFiles.splice(targetPosition, 0, movedItem)
+              handleFilesReorder(newFiles)
+              setSelectedIndex(targetPosition)
+            }
+          } else {
+            // Normal mode: Rate selected file
+            if (files[selectedIndex] && files[selectedIndex].type === 'file') {
+              const rating = parseInt(e.key)
+              handleRating(files[selectedIndex].path, rating)
+            }
+          }
+          break
+
+        case 'Escape':
+          e.preventDefault()
+          if (isSortMode) {
+            setIsSortMode(false)
           }
           break
       }
@@ -129,7 +169,7 @@ export default function BrowserPage() {
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [selectedFile, showUpload, currentPath, files, selectedIndex])
+  }, [selectedFile, showUpload, currentPath, files, selectedIndex, isSortMode])
 
   async function fetchUser() {
     try {
@@ -186,6 +226,26 @@ export default function BrowserPage() {
     }
   }
 
+  function handleFilesReorder(newOrder: FileItem[]) {
+    setFiles(newOrder)
+    // Save custom order for this directory
+    setCustomOrder(prev => ({
+      ...prev,
+      [currentPath]: newOrder
+    }))
+    
+    // Optional: Save to localStorage for persistence
+    if (typeof window !== 'undefined') {
+      try {
+        const existingOrders = JSON.parse(localStorage.getItem('pikachu-file-orders') || '{}')
+        existingOrders[currentPath] = newOrder.map(file => file.path)
+        localStorage.setItem('pikachu-file-orders', JSON.stringify(existingOrders))
+      } catch (error) {
+        console.error('Error saving file order:', error)
+      }
+    }
+  }
+
   if (!user) return null
 
   return (
@@ -206,10 +266,12 @@ export default function BrowserPage() {
           currentPath={currentPath}
           isLoading={isLoading}
           selectedIndex={selectedIndex}
+          isSortMode={isSortMode}
           onNavigate={handleNavigate}
           onRefresh={handleRefresh}
           onSelectFile={setSelectedFile}
           onSetSelectedIndex={setSelectedIndex}
+          onFilesReorder={handleFilesReorder}
         />
       </div>
 

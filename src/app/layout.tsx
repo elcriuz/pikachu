@@ -5,7 +5,9 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Pikachu - Film Production Review Platform',
+  title: process.env.NODE_ENV === 'development' 
+    ? 'Pikachu DEV - Film Production Review Platform'
+    : 'Pikachu - Film Production Review Platform',
   description: 'Upload, review and rate location photos and casting videos',
 }
 

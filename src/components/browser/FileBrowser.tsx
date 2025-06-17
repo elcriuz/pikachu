@@ -12,10 +12,12 @@ interface FileBrowserProps {
   currentPath: string
   isLoading: boolean
   selectedIndex?: number
+  isSortMode?: boolean
   onNavigate: (path: string) => void
   onRefresh: () => void
   onSelectFile?: (file: FileItem) => void
   onSetSelectedIndex?: (index: number) => void
+  onFilesReorder?: (newOrder: FileItem[]) => void
 }
 
 export function FileBrowser({
@@ -23,15 +25,32 @@ export function FileBrowser({
   currentPath,
   isLoading,
   selectedIndex = 0,
+  isSortMode = false,
   onNavigate,
   onRefresh,
   onSelectFile,
   onSetSelectedIndex,
+  onFilesReorder,
 }: FileBrowserProps) {
   const [showCreateFolder, setShowCreateFolder] = useState(false)
 
   return (
     <div className="p-6">
+      {/* Sort Mode Banner */}
+      {isSortMode && (
+        <div className="mb-4 rounded-lg bg-blue-100 border border-blue-300 p-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <span className="font-medium text-blue-800">Sortier-Modus aktiv</span>
+            </div>
+            <div className="text-sm text-blue-600">
+              Tasten 1-5: Position wählen • Enter: Beenden • Esc: Abbrechen
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">
           {currentPath || 'Root'}
@@ -81,9 +100,11 @@ export function FileBrowser({
         <FileGrid 
           files={files} 
           selectedIndex={selectedIndex}
+          isSortMode={isSortMode}
           onNavigate={onNavigate} 
           onSelectFile={onSelectFile} 
           onSetSelectedIndex={onSetSelectedIndex}
+          onFilesReorder={onFilesReorder}
         />
       )}
 

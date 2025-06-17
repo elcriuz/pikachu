@@ -16,8 +16,10 @@ export function KeyboardShortcuts({ context }: KeyboardShortcutsProps) {
       { key: '↑', description: 'Ein Verzeichnis nach oben' },
       { key: '← →', description: 'Zwischen Dateien navigieren' },
       { key: 'Enter', description: 'Datei öffnen / Ordner betreten' },
-      { key: '1-5', description: 'Ausgewählte Datei bewerten' },
-      { key: 'Esc', description: 'Auswahl aufheben' },
+      { key: 'Shift+Enter', description: 'Sortier-Modus aktivieren' },
+      { key: 'Leertaste', description: 'Quick Look (Lightbox öffnen)' },
+      { key: '1-5', description: 'Bewerten / Im Sortier-Modus: Position' },
+      { key: 'Esc', description: 'Auswahl aufheben / Sortier-Modus beenden' },
     ],
     lighttable: [
       { key: 'Mausrad', description: 'Zoom in/out' },

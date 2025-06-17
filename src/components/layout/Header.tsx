@@ -26,8 +26,16 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
   }
 
   return (
-    <header className="border-b bg-white px-6 py-4">
-      <div className="flex items-center justify-between">
+    <>
+      {/* Development Banner */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="bg-orange-500 text-white text-center py-2 text-sm font-medium">
+          🚧 DEVELOPMENT VERSION - Änderungen werden nicht auf dem Live-Server gespeichert
+        </div>
+      )}
+      
+      <header className="border-b bg-white px-6 py-4">
+        <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h1 className="text-xl font-bold">Pikachu</h1>
           
@@ -100,6 +108,7 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
         </div>
       </div>
     </header>
+    </>
   )
 }
 
