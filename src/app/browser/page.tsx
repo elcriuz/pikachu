@@ -189,7 +189,14 @@ export default function BrowserPage() {
         return
       }
       const data = await res.json()
-      setUser(data.user)
+      const user = data.user
+      setUser(user)
+      
+      // If user has a startPath and no path is currently specified, redirect to startPath
+      if (user.startPath && !path) {
+        console.log(`Redirecting user to start path: ${user.startPath}`)
+        router.push(`/browser?path=${encodeURIComponent(user.startPath)}`)
+      }
     } catch (error) {
       router.push('/')
     }

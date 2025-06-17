@@ -2,6 +2,7 @@ export interface User {
   email: string
   name: string
   role: 'admin' | 'manager' | 'user'
+  startPath?: string       // Optional: start path that also acts as upper navigation limit
 }
 
 export interface Metadata {

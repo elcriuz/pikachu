@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Upload, MessageSquare, LogOut, FolderOpen, Home, Layout, ShoppingCart } from 'lucide-react'
+import { Upload, MessageSquare, LogOut, FolderOpen, Home, Layout, ShoppingCart, Settings } from 'lucide-react'
 import type { User, BreadcrumbItem } from '@/types'
 import packageJson from '../../../package.json'
 
@@ -19,7 +19,8 @@ interface HeaderProps {
 export function Header({ user, currentPath, onUpload, onShowDetails, lighttableCount = 0, downloadCount = 0, onShowDownloadCollection }: HeaderProps) {
   const router = useRouter()
 
-  const breadcrumbs = getBreadcrumbs(currentPath)
+  const breadcrumbs = getBreadcrumbs(currentPath, user.startPath)
+  
 
   async function handleLogout() {
     await fetch('/api/auth/logout', { method: 'POST' })
@@ -46,7 +47,10 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push('/browser')}
+              onClick={() => {
+                const homePath = user.startPath ? `/browser?path=${encodeURIComponent(user.startPath)}` : '/browser'
+                router.push(homePath)
+              }}
             >
               <Home className="h-4 w-4" />
             </Button>
@@ -104,7 +108,20 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
           </Button>
           
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">{user.name}</span>
+            <span className="text-sm text-muted-foreground">{user.name} ({user.role})</span>
+            {user.role === 'admin' && (
+              <Button 
+                onClick={() => {
+                  console.log('Settings clicked, navigating...');
+                  router.push('/settings');
+                }} 
+                variant="ghost" 
+                size="sm"
+                title="Settings"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            )}
             <Button onClick={handleLogout} variant="ghost" size="sm">
               <LogOut className="h-4 w-4" />
             </Button>
@@ -115,18 +132,40 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
   )
 }
 
-function getBreadcrumbs(path: string): BreadcrumbItem[] {
+function getBreadcrumbs(path: string, startPath?: string): BreadcrumbItem[] {
   if (!path) return []
   
-  const parts = path.split('/')
+  const parts = path.split('/').filter(part => part) // Remove empty parts
   const breadcrumbs: BreadcrumbItem[] = []
   
-  parts.forEach((part, index) => {
-    if (part) {
-      const path = parts.slice(0, index + 1).join('/')
-      breadcrumbs.push({ name: part, path })
+  // If user has a startPath, only show breadcrumbs from that point onwards
+  if (startPath) {
+    const startParts = startPath.split('/').filter(part => part)
+    
+    // Only show breadcrumbs if current path is within or deeper than startPath
+    if (!path.startsWith(startPath)) {
+      return []
     }
-  })
+    
+    // Remove the startPath parts from the beginning and show relative navigation
+    const relativeParts = parts.slice(startParts.length)
+    
+    // Add the startPath as the first breadcrumb (non-clickable root)
+    const startName = startParts[startParts.length - 1] || 'Root'
+    breadcrumbs.push({ name: startName, path: startPath })
+    
+    // Add relative breadcrumbs
+    relativeParts.forEach((part, index) => {
+      const fullPath = startPath + '/' + relativeParts.slice(0, index + 1).join('/')
+      breadcrumbs.push({ name: part, path: fullPath })
+    })
+  } else {
+    // No restrictions - show full breadcrumbs
+    parts.forEach((part, index) => {
+      const fullPath = parts.slice(0, index + 1).join('/')
+      breadcrumbs.push({ name: part, path: fullPath })
+    })
+  }
   
   return breadcrumbs
 }
