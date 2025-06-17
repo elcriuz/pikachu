@@ -26,23 +26,20 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
   }
 
   return (
-    <>
-      {/* Development Banner */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="bg-orange-500 text-white text-center py-2 text-sm font-medium">
-          🚧 DEVELOPMENT VERSION - Änderungen werden nicht auf dem Live-Server gespeichert
-        </div>
-      )}
-      
-      <header className="border-b bg-white px-6 py-4">
-        <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold">Pikachu</h1>
-            <span className="text-xs text-muted-foreground bg-gray-100 px-2 py-1 rounded">
-              v0.1.1
+    <header className="border-b bg-white px-6 py-4">
+      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <h1 className="text-xl font-bold">Pikachu</h1>
+          <span className="text-xs text-muted-foreground bg-gray-100 px-2 py-1 rounded">
+            v0.1.1
+          </span>
+          {process.env.NODE_ENV === 'development' && (
+            <span className="text-xs text-white bg-orange-500 px-2 py-1 rounded font-medium">
+              DEV
             </span>
-          </div>
+          )}
+        </div>
           
           <nav className="flex items-center gap-2">
             <Button
@@ -69,10 +66,12 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
         </div>
 
         <div className="flex items-center gap-4">
-          <Button onClick={onUpload} size="sm">
-            <Upload className="mr-2 h-4 w-4" />
-            Upload
-          </Button>
+          {(user.role === 'admin' || user.role === 'manager') && (
+            <Button onClick={onUpload} size="sm">
+              <Upload className="mr-2 h-4 w-4" />
+              Upload
+            </Button>
+          )}
           
           <Button 
             onClick={() => router.push('/lighttable')} 
@@ -113,7 +112,6 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
         </div>
       </div>
     </header>
-    </>
   )
 }
 

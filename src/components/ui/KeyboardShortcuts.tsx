@@ -35,7 +35,8 @@ export function KeyboardShortcuts({ context }: KeyboardShortcutsProps) {
     lightbox: [
       { key: '← →', description: 'Zwischen Bildern navigieren' },
       { key: '1-5', description: 'Aktuelles Bild bewerten' },
-      { key: 'Esc / Leertaste', description: 'Lightbox schließen' },
+      { key: 'Esc', description: 'Lightbox schließen' },
+      { key: 'Leertaste', description: 'Lightbox schließen (nur Bilder/PDFs)' },
       { key: '+ =', description: 'Zoom in (nur Bilder)' },
       { key: '-', description: 'Zoom out (nur Bilder)' },
       { key: '0', description: 'Zoom zurücksetzen (nur Bilder)' },

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Folder, FileImage, FileVideo, File, FileText, Star, Check, Loader2, Layout, Plus, Download, ShoppingCart } from 'lucide-react'
+import { Folder, FileImage, FileVideo, File, FileText, Star, Check, Loader2, Layout, Plus, Download, ShoppingCart, Trash2 } from 'lucide-react'
 import { formatBytes } from '@/lib/utils'
 import { lighttableStore } from '@/lib/lighttable-store'
 import { downloadStore } from '@/lib/download-store'
@@ -25,19 +25,21 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { FileItem, Metadata } from '@/types'
+import type { FileItem, Metadata, User } from '@/types'
 
 interface FileGridProps {
   files: FileItem[]
   selectedIndex?: number
   isSortMode?: boolean
+  user?: User
   onNavigate: (path: string) => void
   onSelectFile?: (file: FileItem) => void
   onSetSelectedIndex?: (index: number) => void
   onFilesReorder?: (newOrder: FileItem[]) => void
+  onDeleteFile?: (file: FileItem) => void
 }
 
-export function FileGrid({ files, selectedIndex = 0, isSortMode = false, onNavigate, onSelectFile, onSetSelectedIndex, onFilesReorder }: FileGridProps) {
+export function FileGrid({ files, selectedIndex = 0, isSortMode = false, user, onNavigate, onSelectFile, onSetSelectedIndex, onFilesReorder, onDeleteFile }: FileGridProps) {
   const [metadata, setMetadata] = useState<Record<string, Metadata>>({})
   const [thumbnails, setThumbnails] = useState<Record<string, string>>({})
   const [loadingThumbs, setLoadingThumbs] = useState<Record<string, boolean>>({})
@@ -217,10 +219,12 @@ export function FileGrid({ files, selectedIndex = 0, isSortMode = false, onNavig
               loadingThumbs={loadingThumbs}
               lighttableItems={lighttableItems}
               downloadItems={downloadItems}
+              user={user}
               onNavigate={onNavigate}
               onSelectFile={onSelectFile}
               onSetSelectedIndex={onSetSelectedIndex}
               toggleSelection={toggleSelection}
+              onDeleteFile={onDeleteFile}
             />
           ))}
         </div>
@@ -239,10 +243,12 @@ interface SortableFileItemProps {
   loadingThumbs: Record<string, boolean>
   lighttableItems: Set<string>
   downloadItems: Set<string>
+  user?: User
   onNavigate: (path: string) => void
   onSelectFile?: (file: FileItem) => void
   onSetSelectedIndex?: (index: number) => void
   toggleSelection: (path: string) => void
+  onDeleteFile?: (file: FileItem) => void
 }
 
 function SortableFileItem({
@@ -255,10 +261,12 @@ function SortableFileItem({
   loadingThumbs,
   lighttableItems,
   downloadItems,
+  user,
   onNavigate,
   onSelectFile,
   onSetSelectedIndex,
   toggleSelection,
+  onDeleteFile,
 }: SortableFileItemProps) {
   const {
     attributes,
@@ -428,6 +436,22 @@ function SortableFileItem({
                     <Plus className="h-3 w-3 text-green-600" />
                   </button>
                 )
+              )}
+              
+              {/* Delete button (for managers and admins) */}
+              {user && (user.role === 'admin' || user.role === 'manager') && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    onDeleteFile?.(file)
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  className="h-6 w-6 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-red-50 transition-all"
+                  title="Datei löschen"
+                >
+                  <Trash2 className="h-3 w-3 text-red-600" />
+                </button>
               )}
               
               {/* Selection indicator */}

@@ -38,7 +38,7 @@ data/
 # Installation
 pnpm install
 
-# Entwicklungsserver (Port 4200)
+# Entwicklungsserver (Port 4200) - startet automatisch neu bei Dateiänderungen
 pnpm dev
 
 # Build für Production

@@ -52,8 +52,18 @@ export function FileDetail({ file, allFiles, user, onClose, onNavigate, onRating
     
     // Keyboard navigation
     const handleKeydown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' || e.key === ' ') {
+      if (e.key === 'Escape') {
         e.preventDefault()
+        e.stopPropagation()
+        e.stopImmediatePropagation()
+        onClose()
+      }
+      
+      // Spacebar closes lightbox only for non-video files
+      if (e.key === ' ' && !file.mimeType?.startsWith('video/')) {
+        e.preventDefault()
+        e.stopPropagation()
+        e.stopImmediatePropagation()
         onClose()
       }
       if (e.key === 'ArrowLeft' && canGoPrev) onNavigate(allFiles[currentIndex - 1])

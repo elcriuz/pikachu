@@ -275,6 +275,7 @@ export default function BrowserPage() {
           isLoading={isLoading}
           selectedIndex={selectedIndex}
           isSortMode={isSortMode}
+          user={user}
           onNavigate={handleNavigate}
           onRefresh={handleRefresh}
           onSelectFile={setSelectedFile}
