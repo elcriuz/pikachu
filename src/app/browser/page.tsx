@@ -75,7 +75,7 @@ export default function BrowserPage() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Only handle keyboard navigation when not in a modal/dialog
-      if (selectedFile || showUpload) return
+      if (selectedFile || showUpload || showDownloadCollection) return
 
       switch (e.key) {
         case 'ArrowUp':
@@ -127,9 +127,13 @@ export default function BrowserPage() {
           
         case ' ': // Spacebar
           e.preventDefault()
+          e.stopPropagation()
           // Quick Look - open lightbox for files only
           if (files[selectedIndex] && files[selectedIndex].type === 'file') {
+            console.log('Opening Quick Look for:', files[selectedIndex].name)
             setSelectedFile(files[selectedIndex])
+          } else {
+            console.log('No file selected or selected item is not a file')
           }
           break
 
@@ -215,15 +219,19 @@ export default function BrowserPage() {
       })
       // Update only the specific file's metadata to avoid flicker
       preserveSelectionRef.current = true
-      const updatedFiles = files.map(file => 
-        file.path === filePath 
-          ? { ...file, metadata: { ...file.metadata, rating } }
-          : file
-      )
-      setFiles(updatedFiles)
+      updateFileRating(filePath, rating)
     } catch (error) {
       console.error('Error setting rating:', error)
     }
+  }
+
+  function updateFileRating(filePath: string, rating: number) {
+    const updatedFiles = files.map(file => 
+      file.path === filePath 
+        ? { ...file, metadata: { ...file.metadata, rating } }
+        : file
+    )
+    setFiles(updatedFiles)
   }
 
   function handleFilesReorder(newOrder: FileItem[]) {
@@ -304,6 +312,7 @@ export default function BrowserPage() {
           user={user}
           onClose={() => setSelectedFile(null)}
           onNavigate={(file) => setSelectedFile(file)}
+          onRatingUpdate={updateFileRating}
         />
       )}
     </div>

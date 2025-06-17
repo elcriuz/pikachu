@@ -52,3 +52,17 @@ pnpm start
 - `.metadata.json` Dateien speichern Kommentare und Bewertungen
 - Einfache Benutzerverwaltung über `config/users.json`
 - Alle Medien werden lokal im `data/` Ordner gespeichert
+
+### Versionierung
+Die App zeigt eine Versionsnummer im Header an. Diese wird manuell aktualisiert bei bedeutenden Feature-Updates:
+
+**Aktuelle Version: v0.1.1**
+
+Versionshistorie:
+- v0.1.0: Initial MVP (File Browser, Lighttable, Video Player, Rating System)
+- v0.1.1: Download-Sammlung, Drag-and-Drop Sortierung, Quick Look (Spacebar), Keyboard Sort Mode
+
+**Update-Richtlinien:**
+- Patch (0.x.1): Bugfixes, kleine Verbesserungen, neue Features in MVP-Phase
+- Minor (0.1.x): Neue größere Features, UI-Verbesserungen  
+- Major (1.0.0): Production-Ready Release, Breaking Changes

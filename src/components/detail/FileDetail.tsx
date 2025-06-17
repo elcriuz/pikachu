@@ -15,9 +15,10 @@ interface FileDetailProps {
   user: User
   onClose: () => void
   onNavigate: (file: FileItem) => void
+  onRatingUpdate?: (filePath: string, rating: number) => void
 }
 
-export function FileDetail({ file, allFiles, user, onClose, onNavigate }: FileDetailProps) {
+export function FileDetail({ file, allFiles, user, onClose, onNavigate, onRatingUpdate }: FileDetailProps) {
   const [metadata, setMetadata] = useState<Metadata>({})
   const [showMetadata, setShowMetadata] = useState(false)
   const [newComment, setNewComment] = useState('')
@@ -105,6 +106,8 @@ export function FileDetail({ file, allFiles, user, onClose, onNavigate }: FileDe
         body: JSON.stringify({ path: file.path, action: 'rating', rating }),
       })
       fetchMetadata()
+      // Notify parent component about rating update
+      onRatingUpdate?.(file.path, rating)
     } catch (error) {
       console.error('Error setting rating:', error)
     }

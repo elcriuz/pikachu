@@ -37,7 +37,12 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
       <header className="border-b bg-white px-6 py-4">
         <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold">Pikachu</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold">Pikachu</h1>
+            <span className="text-xs text-muted-foreground bg-gray-100 px-2 py-1 rounded">
+              v0.1.1
+            </span>
+          </div>
           
           <nav className="flex items-center gap-2">
             <Button
