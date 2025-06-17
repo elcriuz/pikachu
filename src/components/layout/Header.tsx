@@ -32,7 +32,7 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
         <div className="flex items-center gap-2">
           <h1 className="text-xl font-bold">Pikachu</h1>
           <span className="text-xs text-muted-foreground bg-gray-100 px-2 py-1 rounded">
-            v0.1.1
+            v0.2.0
           </span>
           {process.env.NODE_ENV === 'development' && (
             <span className="text-xs text-white bg-orange-500 px-2 py-1 rounded font-medium">

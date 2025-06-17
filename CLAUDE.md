@@ -56,11 +56,12 @@ pnpm start
 ### Versionierung
 Die App zeigt eine Versionsnummer im Header an. Diese wird manuell aktualisiert bei bedeutenden Feature-Updates:
 
-**Aktuelle Version: v0.1.1**
+**Aktuelle Version: v0.2.0**
 
 Versionshistorie:
 - v0.1.0: Initial MVP (File Browser, Lighttable, Video Player, Rating System)
 - v0.1.1: Download-Sammlung, Drag-and-Drop Sortierung, Quick Look (Spacebar), Keyboard Sort Mode
+- v0.2.0: Rollensystem (Admin/Manager/User), Drag & Drop Upload, File Deletion, UI Cleanup
 
 **Update-Richtlinien:**
 - Patch (0.x.1): Bugfixes, kleine Verbesserungen, neue Features in MVP-Phase
