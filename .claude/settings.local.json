@@ -14,7 +14,10 @@
       "Bash(pnpm add:*)",
       "Bash(cp:*)",
       "Bash(pnpm list:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm --version)",
+      "Bash(npm cache clean:*)",
+      "Bash(yarn --version)"
     ],
     "deny": []
   }

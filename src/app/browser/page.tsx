@@ -6,7 +6,9 @@ import { FileBrowser } from '@/components/browser/FileBrowser'
 import { Header } from '@/components/layout/Header'
 import { UploadDialog } from '@/components/upload/UploadDialog'
 import { FileDetail } from '@/components/detail/FileDetail'
+import { DownloadCollection } from '@/components/download/DownloadCollection'
 import { lighttableStore } from '@/lib/lighttable-store'
+import { downloadStore } from '@/lib/download-store'
 import { Layout } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { KeyboardShortcutsToggle } from '@/components/ui/KeyboardShortcuts'
@@ -20,6 +22,8 @@ export default function BrowserPage() {
   const [showUpload, setShowUpload] = useState(false)
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null)
   const [lighttableCount, setLighttableCount] = useState(0)
+  const [downloadCount, setDownloadCount] = useState(0)
+  const [showDownloadCollection, setShowDownloadCollection] = useState(false)
   const [isHydrated, setIsHydrated] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const router = useRouter()
@@ -29,15 +33,23 @@ export default function BrowserPage() {
   useEffect(() => {
     fetchUser()
     
-    // Hydration and lighttable setup
+    // Hydration and store setup
     setIsHydrated(true)
     setLighttableCount(lighttableStore.getState().items.length)
+    setDownloadCount(downloadStore.getState().items.length)
     
-    const unsubscribe = lighttableStore.subscribe((state) => {
+    const unsubscribeLighttable = lighttableStore.subscribe((state) => {
       setLighttableCount(state.items.length)
     })
     
-    return unsubscribe
+    const unsubscribeDownload = downloadStore.subscribe((state) => {
+      setDownloadCount(state.items.length)
+    })
+    
+    return () => {
+      unsubscribeLighttable()
+      unsubscribeDownload()
+    }
   }, [])
 
   useEffect(() => {
@@ -161,9 +173,14 @@ export default function BrowserPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path: filePath, action: 'rating', rating }),
       })
-      // Refresh to show updated rating but preserve selection
+      // Update only the specific file's metadata to avoid flicker
       preserveSelectionRef.current = true
-      await fetchFiles(currentPath)
+      const updatedFiles = files.map(file => 
+        file.path === filePath 
+          ? { ...file, metadata: { ...file.metadata, rating } }
+          : file
+      )
+      setFiles(updatedFiles)
     } catch (error) {
       console.error('Error setting rating:', error)
     }
@@ -179,6 +196,8 @@ export default function BrowserPage() {
         onUpload={() => setShowUpload(true)}
         onShowDetails={() => {}}
         lighttableCount={isHydrated ? lighttableCount : 0}
+        downloadCount={isHydrated ? downloadCount : 0}
+        onShowDownloadCollection={() => setShowDownloadCollection(true)}
       />
       
       <div className="flex-1 overflow-auto">
@@ -195,7 +214,7 @@ export default function BrowserPage() {
       </div>
 
       {/* Keyboard Shortcuts Toggle */}
-      {!selectedFile && !showUpload && (
+      {!selectedFile && !showUpload && !showDownloadCollection && (
         <KeyboardShortcutsToggle context="browser" />
       )}
 
@@ -207,6 +226,12 @@ export default function BrowserPage() {
             setShowUpload(false)
             handleRefresh()
           }}
+        />
+      )}
+
+      {showDownloadCollection && (
+        <DownloadCollection
+          onClose={() => setShowDownloadCollection(false)}
         />
       )}
 

@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Folder, FileImage, FileVideo, File, FileText, Star, Check, Loader2, Layout, Plus } from 'lucide-react'
+import { Folder, FileImage, FileVideo, File, FileText, Star, Check, Loader2, Layout, Plus, Download, ShoppingCart } from 'lucide-react'
 import { formatBytes } from '@/lib/utils'
 import { lighttableStore } from '@/lib/lighttable-store'
+import { downloadStore } from '@/lib/download-store'
 import type { FileItem, Metadata } from '@/types'
 
 interface FileGridProps {
@@ -20,6 +21,7 @@ export function FileGrid({ files, selectedIndex = 0, onNavigate, onSelectFile, o
   const [thumbnails, setThumbnails] = useState<Record<string, string>>({})
   const [loadingThumbs, setLoadingThumbs] = useState<Record<string, boolean>>({})
   const [lighttableItems, setLighttableItems] = useState<Set<string>>(new Set())
+  const [downloadItems, setDownloadItems] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     // Load metadata and thumbnails for all files
@@ -35,17 +37,30 @@ export function FileGrid({ files, selectedIndex = 0, onNavigate, onSelectFile, o
 
   useEffect(() => {
     // Subscribe to lighttable changes to track which items are in the lighttable
-    const unsubscribe = lighttableStore.subscribe((state) => {
+    const unsubscribeLighttable = lighttableStore.subscribe((state) => {
       const itemPaths = new Set(state.items.map(item => item.filePath))
       setLighttableItems(itemPaths)
     })
     
-    // Initial load
-    const initialState = lighttableStore.getState()
-    const initialPaths = new Set(initialState.items.map(item => item.filePath))
-    setLighttableItems(initialPaths)
+    // Subscribe to download collection changes
+    const unsubscribeDownload = downloadStore.subscribe((state) => {
+      const itemPaths = new Set(state.items.map(item => item.filePath))
+      setDownloadItems(itemPaths)
+    })
     
-    return unsubscribe
+    // Initial load
+    const initialLighttableState = lighttableStore.getState()
+    const initialLighttablePaths = new Set(initialLighttableState.items.map(item => item.filePath))
+    setLighttableItems(initialLighttablePaths)
+    
+    const initialDownloadState = downloadStore.getState()
+    const initialDownloadPaths = new Set(initialDownloadState.items.map(item => item.filePath))
+    setDownloadItems(initialDownloadPaths)
+    
+    return () => {
+      unsubscribeLighttable()
+      unsubscribeDownload()
+    }
   }, [])
 
   async function fetchMetadata(path: string) {
@@ -120,7 +135,7 @@ export function FileGrid({ files, selectedIndex = 0, onNavigate, onSelectFile, o
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
       {files.map((file, index) => {
-        const meta = metadata[file.path] || {}
+        const meta = file.metadata || metadata[file.path] || {}
         const isKeyboardSelected = index === selectedIndex
         
         return (
@@ -185,6 +200,33 @@ export function FileGrid({ files, selectedIndex = 0, onNavigate, onSelectFile, o
                 {/* Quick actions */}
                 {file.type === 'file' && (
                   <div className="absolute right-2 top-2 flex gap-1">
+                    {/* Add to Download Collection */}
+                    {downloadItems.has(file.path) ? (
+                      <div className="h-6 w-6 rounded-full bg-orange-500 shadow-md flex items-center justify-center"
+                           title="In Download-Sammlung">
+                        <ShoppingCart className="h-3 w-3 text-white" />
+                      </div>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          downloadStore.addItem(file.path, file.name, file.size, file.mimeType)
+                          // Visual feedback
+                          const button = e.currentTarget
+                          button.style.transform = 'scale(1.2)'
+                          button.style.backgroundColor = '#f97316'
+                          setTimeout(() => {
+                            button.style.transform = 'scale(1)'
+                            button.style.backgroundColor = ''
+                          }, 200)
+                        }}
+                        className="h-6 w-6 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-orange-50 transition-all"
+                        title="Zur Download-Sammlung hinzufügen"
+                      >
+                        <Download className="h-3 w-3 text-orange-600" />
+                      </button>
+                    )}
+                    
                     {/* Add to Lighttable (only for images) */}
                     {file.mimeType?.startsWith('image/') && (
                       lighttableItems.has(file.path) ? (

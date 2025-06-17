@@ -23,6 +23,7 @@ export interface FileItem {
   size?: number
   modified: string
   mimeType?: string
+  metadata?: Metadata
 }
 
 export interface BreadcrumbItem {

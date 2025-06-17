@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Upload, MessageSquare, LogOut, FolderOpen, Home, Layout } from 'lucide-react'
+import { Upload, MessageSquare, LogOut, FolderOpen, Home, Layout, ShoppingCart } from 'lucide-react'
 import type { User, BreadcrumbItem } from '@/types'
 
 interface HeaderProps {
@@ -11,9 +11,11 @@ interface HeaderProps {
   onUpload: () => void
   onShowDetails: () => void
   lighttableCount?: number
+  downloadCount?: number
+  onShowDownloadCollection?: () => void
 }
 
-export function Header({ user, currentPath, onUpload, onShowDetails, lighttableCount = 0 }: HeaderProps) {
+export function Header({ user, currentPath, onUpload, onShowDetails, lighttableCount = 0, downloadCount = 0, onShowDownloadCollection }: HeaderProps) {
   const router = useRouter()
 
   const breadcrumbs = getBreadcrumbs(currentPath)
@@ -70,6 +72,21 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
             {lighttableCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 {lighttableCount}
+              </span>
+            )}
+          </Button>
+          
+          <Button 
+            onClick={onShowDownloadCollection} 
+            size="sm" 
+            variant="outline"
+            className="relative"
+          >
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Downloads
+            {downloadCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {downloadCount}
               </span>
             )}
           </Button>
