@@ -1,6 +1,6 @@
 {
   "name": "pikachu",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "scripts": {
     "dev": "next dev -p 4200",
@@ -32,13 +32,16 @@
     "react-pdf": "^9.2.1",
     "sharp": "^0.33.0",
     "tailwind-merge": "^2.1.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@types/archiver": "^6.0.3",
+    "@types/fluent-ffmpeg": "^2.1.27",
     "@types/node": "^20.10.4",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
+    "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.55.0",
     "eslint-config-next": "14.0.4",

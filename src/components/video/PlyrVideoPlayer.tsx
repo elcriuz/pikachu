@@ -23,7 +23,7 @@ export function PlyrVideoPlayer({
   onError,
   className = ''
 }: PlyrVideoPlayerProps) {
-  const plyrRef = useRef<Plyr>(null)
+  const plyrRef = useRef<any>(null)
   const [player, setPlayer] = useState<any>(null)
 
   const plyrOptions = {
@@ -54,8 +54,8 @@ export function PlyrVideoPlayer({
       options: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
     },
     quality: {
-      default: 'auto',
-      options: ['auto']
+      default: 1080,
+      options: [1080, 720, 480]
     },
     previewThumbnails: {
       enabled: !!previewThumbnails,

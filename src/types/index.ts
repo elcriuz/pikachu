@@ -39,3 +39,11 @@ export interface Comment {
   timestamp: string
   rating?: number
 }
+
+export interface UploadProgress {
+  fileId: string
+  fileName: string
+  progress: number
+  status: 'uploading' | 'completed' | 'error'
+  error?: string
+}

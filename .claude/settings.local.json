@@ -20,7 +20,9 @@
       "Bash(yarn --version)",
       "mcp__ide__getDiagnostics",
       "Bash(pnpm dev:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(git commit:*)",
+      "Bash(pnpm build:*)"
     ],
     "deny": []
   }

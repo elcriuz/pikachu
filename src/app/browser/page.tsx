@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+// Force dynamic rendering 
+export const dynamic = 'force-dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FileBrowser } from '@/components/browser/FileBrowser'
 import { Header } from '@/components/layout/Header'

@@ -56,6 +56,7 @@ class LighttableStore {
   }
 
   private loadFromStorage() {
+    if (typeof window === 'undefined') return
     try {
       const saved = localStorage.getItem('lighttable-state')
       if (saved) {

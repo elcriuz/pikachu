@@ -101,7 +101,7 @@ export async function convertVideo(
             percent: progress.percent,
             currentFps: progress.currentFps,
             currentKbps: progress.currentKbps,
-            targetSize: progress.targetSize,
+            targetSize: String(progress.targetSize),
             timemark: progress.timemark
           })
         }
@@ -190,7 +190,7 @@ export async function generateVideoThumbnails(
   }
 
   // Generate thumbnails at intervals
-  const timestamps = []
+  const timestamps: number[] = []
   for (let time = 0; time < duration; time += interval) {
     timestamps.push(time)
   }
