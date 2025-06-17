@@ -96,7 +96,7 @@ export function Lighttable({ onClose }: LighttableProps) {
       setIsPanning(false)
     }
 
-    if (isPanning) {
+    if (isPanning && typeof document !== 'undefined') {
       document.addEventListener('mousemove', handleGlobalMouseMove)
       document.addEventListener('mouseup', handleGlobalMouseUp)
       
@@ -425,7 +425,7 @@ function LighttablePhoto({
       }
     }
 
-    if (isDragging || isResizing) {
+    if ((isDragging || isResizing) && typeof document !== 'undefined') {
       document.addEventListener('mousemove', handleGlobalMouseMove)
       document.addEventListener('mouseup', handleGlobalMouseUp)
       

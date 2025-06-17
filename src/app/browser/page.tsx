@@ -1,14 +1,16 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-// Force dynamic rendering 
+import dynamicImport from 'next/dynamic'
+// Force dynamic rendering to avoid SSR issues
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { FileBrowser } from '@/components/browser/FileBrowser'
-import { Header } from '@/components/layout/Header'
-import { UploadDialog } from '@/components/upload/UploadDialog'
-import { FileDetail } from '@/components/detail/FileDetail'
-import { DownloadCollection } from '@/components/download/DownloadCollection'
+const FileBrowser = dynamicImport(() => import('@/components/browser/FileBrowser').then(mod => ({ default: mod.FileBrowser })), { ssr: false })
+const Header = dynamicImport(() => import('@/components/layout/Header').then(mod => ({ default: mod.Header })), { ssr: false })
+const UploadDialog = dynamicImport(() => import('@/components/upload/UploadDialog').then(mod => ({ default: mod.UploadDialog })), { ssr: false })
+const FileDetail = dynamicImport(() => import('@/components/detail/FileDetail').then(mod => ({ default: mod.FileDetail })), { ssr: false })
+const DownloadCollection = dynamicImport(() => import('@/components/download/DownloadCollection').then(mod => ({ default: mod.DownloadCollection })), { ssr: false })
 import { lighttableStore } from '@/lib/lighttable-store'
 import { downloadStore } from '@/lib/download-store'
 import { Layout } from 'lucide-react'
