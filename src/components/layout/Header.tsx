@@ -23,8 +23,15 @@ export function Header({ user, currentPath, onUpload, onShowDetails, lighttableC
   
 
   async function handleLogout() {
-    await fetch('/api/auth/logout', { method: 'POST' })
-    router.push('/')
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      // Force a hard refresh to ensure clean state
+      window.location.href = '/'
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Fallback: still redirect even if logout API fails
+      window.location.href = '/'
+    }
   }
 
   return (
