@@ -68,3 +68,6 @@ Versionshistorie:
 - Patch (0.x.1): Bugfixes, kleine Verbesserungen, neue Features in MVP-Phase
 - Minor (0.1.x): Neue größere Features, UI-Verbesserungen  
 - Major (1.0.0): Production-Ready Release, Breaking Changes
+
+**Entwicklungs-Notizen:**
+- Auto-Commits bei Änderungen mit automatischer Versionierung implementieren
