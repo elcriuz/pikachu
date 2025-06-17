@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Folder, FileImage, FileVideo, File, FileText, Star, Check, Loader2, Layout, Plus, Download, ShoppingCart, Trash2 } from 'lucide-react'
+import { Folder, FileImage, FileVideo, File, FileText, Star, Check, Loader2, Layout, Plus, Download, ShoppingCart, Trash2, FolderPlus } from 'lucide-react'
 import { formatBytes } from '@/lib/utils'
 import { lighttableStore } from '@/lib/lighttable-store'
 import { downloadStore } from '@/lib/download-store'
@@ -37,9 +37,10 @@ interface FileGridProps {
   onSetSelectedIndex?: (index: number) => void
   onFilesReorder?: (newOrder: FileItem[]) => void
   onDeleteFile?: (file: FileItem) => void
+  onCreateFolder?: () => void
 }
 
-export function FileGrid({ files, selectedIndex = 0, isSortMode = false, user, onNavigate, onSelectFile, onSetSelectedIndex, onFilesReorder, onDeleteFile }: FileGridProps) {
+export function FileGrid({ files, selectedIndex = 0, isSortMode = false, user, onNavigate, onSelectFile, onSetSelectedIndex, onFilesReorder, onDeleteFile, onCreateFolder }: FileGridProps) {
   const [metadata, setMetadata] = useState<Record<string, Metadata>>({})
   const [thumbnails, setThumbnails] = useState<Record<string, string>>({})
   const [loadingThumbs, setLoadingThumbs] = useState<Record<string, boolean>>({})
@@ -227,6 +228,26 @@ export function FileGrid({ files, selectedIndex = 0, isSortMode = false, user, o
               onDeleteFile={onDeleteFile}
             />
           ))}
+          
+          {/* Create Folder Button for Admins/Managers - positioned after existing files */}
+          {onCreateFolder && user && (user.role === 'admin' || user.role === 'manager') && (
+            <div
+              onClick={onCreateFolder}
+              className="group relative cursor-pointer rounded-lg border-2 border-dashed border-gray-300 bg-gray-50/50 hover:border-blue-400 hover:bg-blue-50/50 transition-colors opacity-60 hover:opacity-80"
+              style={{ 
+                gridColumn: 'span 1',
+                width: '33%',
+                height: '100%',
+                aspectRatio: '0.33 / 1',
+                justifySelf: 'start'
+              }}
+            >
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 group-hover:text-blue-600">
+                <FolderPlus className="h-6 w-6 mb-2" />
+                <span className="text-xs font-medium text-center">Neuer Ordner</span>
+              </div>
+            </div>
+          )}
         </div>
       </SortableContext>
     </DndContext>

@@ -167,6 +167,7 @@ export function FileBrowser({
         </div>
       )}
 
+
       {/* Drag & Drop Overlay */}
       {isDragOver && canUpload && (
         <div className="absolute inset-0 z-50 bg-blue-50/90 border-2 border-dashed border-blue-400 rounded-lg flex items-center justify-center">
@@ -223,6 +224,7 @@ export function FileBrowser({
           onSetSelectedIndex={onSetSelectedIndex}
           onFilesReorder={onFilesReorder}
           onDeleteFile={(file) => setFileToDelete(file)}
+          onCreateFolder={() => setShowCreateFolder(true)}
         />
       )}
 
