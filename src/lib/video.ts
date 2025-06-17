@@ -28,10 +28,21 @@ async function findFFmpeg(): Promise<string | null> {
   return null
 }
 
-// Set ffmpeg path
-ffmpeg.setFfmpegPath('/opt/homebrew/bin/ffmpeg')
-ffmpeg.setFfprobePath('/opt/homebrew/bin/ffprobe')
-console.log('Using ffmpeg at: /opt/homebrew/bin/ffmpeg')
+// Set ffmpeg path dynamically
+async function initFFmpeg() {
+  const ffmpegPath = await findFFmpeg()
+  if (ffmpegPath && ffmpegPath !== 'ffmpeg') {
+    ffmpeg.setFfmpegPath(ffmpegPath)
+    const ffprobePath = ffmpegPath.replace('ffmpeg', 'ffprobe')
+    ffmpeg.setFfprobePath(ffprobePath)
+    console.log(`Using ffmpeg at: ${ffmpegPath}`)
+  } else {
+    console.log('Using system ffmpeg')
+  }
+}
+
+// Initialize on startup
+initFFmpeg().catch(console.error)
 
 interface ConversionProgress {
   percent: number
