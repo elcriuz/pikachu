@@ -111,8 +111,10 @@ export function PDFViewer({ src, onError, className = '' }: PDFViewerProps) {
       }
     }
 
-    document.addEventListener('keydown', handleKeydown)
-    return () => document.removeEventListener('keydown', handleKeydown)
+    if (typeof document !== 'undefined') {
+      document.addEventListener('keydown', handleKeydown)
+      return () => document.removeEventListener('keydown', handleKeydown)
+    }
   }, [pageNumber, numPages])
 
   if (error) {

@@ -56,7 +56,7 @@ pnpm start
 ### Versionierung
 Die App zeigt eine Versionsnummer im Header an. Diese wird manuell aktualisiert bei bedeutenden Feature-Updates:
 
-**Aktuelle Version: v0.2.3**
+**Aktuelle Version: v0.2.4**
 
 Versionshistorie:
 - v0.1.0: Initial MVP (File Browser, Lighttable, Video Player, Rating System)
@@ -65,6 +65,7 @@ Versionshistorie:
 - v0.2.1: Header Upload-Button entfernt, subtile Drag & Drop Info, package.json Versionierung
 - v0.2.2: Build-Fix für Live-Server, Comment Interface hinzugefügt
 - v0.2.3: TypeScript Build-Fixes, Missing Dependencies, SSR-Guards für localStorage
+- v0.2.4: SSR-Guards für document, Build-Config erweitert, not-found.tsx hinzugefügt
 
 **Update-Richtlinien:**
 - Patch (0.x.1): Bugfixes, kleine Verbesserungen, neue Features in MVP-Phase

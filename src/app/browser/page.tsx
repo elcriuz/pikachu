@@ -173,8 +173,10 @@ export default function BrowserPage() {
       }
     }
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
+    if (typeof document !== 'undefined') {
+      document.addEventListener('keydown', handleKeyDown)
+      return () => document.removeEventListener('keydown', handleKeyDown)
+    }
   }, [selectedFile, showUpload, currentPath, files, selectedIndex, isSortMode])
 
   async function fetchUser() {

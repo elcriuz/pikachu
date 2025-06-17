@@ -561,7 +561,7 @@ export function FileDetail({ file, allFiles, user, onClose, onNavigate, onRating
                   onClick={() => {
                     lighttableStore.addItem(file.path, file.name, file.mimeType!)
                     // Visual feedback
-                    const button = document.activeElement as HTMLElement
+                    const button = typeof document !== 'undefined' ? document.activeElement as HTMLElement : null
                     if (button) {
                       button.style.transform = 'scale(0.95)'
                       setTimeout(() => {

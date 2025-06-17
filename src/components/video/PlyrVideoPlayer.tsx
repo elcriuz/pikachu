@@ -221,11 +221,15 @@ export function PlyrVideoPlayer({
         }
 
         // Add keyboard event listener to document
-        document.addEventListener('keydown', handleKeydown)
+        if (typeof document !== 'undefined') {
+          document.addEventListener('keydown', handleKeydown)
+        }
 
         // Cleanup function
         return () => {
-          document.removeEventListener('keydown', handleKeydown)
+          if (typeof document !== 'undefined') {
+            document.removeEventListener('keydown', handleKeydown)
+          }
           if (plyrInstance && typeof plyrInstance.destroy === 'function') {
             plyrInstance.destroy()
           }
