@@ -51,7 +51,10 @@ export function FileDetail({ file, allFiles, user, onClose, onNavigate }: FileDe
     
     // Keyboard navigation
     const handleKeydown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape' || e.key === ' ') {
+        e.preventDefault()
+        onClose()
+      }
       if (e.key === 'ArrowLeft' && canGoPrev) onNavigate(allFiles[currentIndex - 1])
       if (e.key === 'ArrowRight' && canGoNext) onNavigate(allFiles[currentIndex + 1])
       if (e.key === 'c' && videoError && !isConverting) handleConvert()
